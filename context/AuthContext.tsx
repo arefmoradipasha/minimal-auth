@@ -16,8 +16,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
-
-  // Load user from localStorage on mount
+  
   useEffect(() => {
     const stored = localStorage.getItem("auth_user")
     if (stored) {
@@ -31,7 +30,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false)
   }, [])
 
-  // Sync user changes with localStorage
   useEffect(() => {
     if (loading) return
 
@@ -45,14 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Handle redirects based on auth state
   useEffect(() => {
     if (loading) return
-
-    // اگر کاربر لاگین کرده و در صفحه لاگین است، به داشبورد هدایت شود
     if (pathname === "/login" && user) {
       router.replace("/dashboard")
       return
     }
 
-    // فقط مسیر داشبورد محافظت شده است
     if (pathname === "/dashboard" && !user) {
       router.replace("/login")
       return
