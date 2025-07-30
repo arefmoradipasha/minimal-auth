@@ -17,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
 
+  // Load user from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("auth_user")
     if (stored) {
@@ -30,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false)
   }, [])
 
+  // Sync user changes with localStorage
   useEffect(() => {
     if (loading) return
 
@@ -40,16 +42,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, loading])
 
+  // Handle redirects based on auth state
   useEffect(() => {
     if (loading) return
 
+    // اگر کاربر لاگین کرده و در صفحه لاگین است، به داشبورد هدایت شود
     if (pathname === "/login" && user) {
       router.replace("/dashboard")
       return
     }
 
-    const protectedPaths = ["/dashboard"]
-    if (protectedPaths.includes(pathname) && !user) {
+    // فقط مسیر داشبورد محافظت شده است
+    if (pathname === "/dashboard" && !user) {
       router.replace("/login")
       return
     }
@@ -61,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) {
-    throw new Error(" AuthContext باید درون AuthProvider استفاده شود")
+    throw new Error("useAuth باید درون AuthProvider استفاده شود")
   }
   return context
 }
